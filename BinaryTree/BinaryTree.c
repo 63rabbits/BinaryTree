@@ -48,7 +48,7 @@ BTN_t *insertElementIntoBT(BTN_t *R, int value, void *element) {
     if (R == NULL) return target;
     
     //　level-order traversal.
-    Queue_t *Q = createQueue();
+    QUEUE_t *Q = createQueue();
     enQueue(Q, R);
     while (!isEmptyQueue(Q)) {
         BTN_t *node = deQueue(Q);
@@ -127,7 +127,7 @@ BTN_t *breadthFirstFindNodeOnBT(BTN_t *R, int value) {
     if (R == NULL) return NULL;
     //　level-order traversal.
     BTN_t *findNode = NULL;
-    Queue_t *Q = createQueue();
+    QUEUE_t *Q = createQueue();
     enQueue(Q, R);
     while (!isEmptyQueue(Q)) {
         BTN_t * node = deQueue(Q);
@@ -167,7 +167,7 @@ BTN_t *depthFirstFindNodeOnBT(BTN_t *R, int value) {
 }
 
 void levelOrderTraversalOnBT(BTN_t *R) {
-    Queue_t *Q = createQueue();
+    QUEUE_t *Q = createQueue();
     enQueue(Q, R);
     while (!isEmptyQueue(Q)) {
         BTN_t * node = deQueue(Q);
