@@ -109,21 +109,21 @@ bool destroyElement(Element_t *element) {
 
 bool levelOrderProcess(void *R) {
     printf("level-order traversal : %d\n", ((BTN_t*)R)->value);
-    return false;
+    return false;   // none stop.
 }
 
 bool preOrderProcess(void *R) {
     printf("pre-order traversal : %d\n", ((BTN_t*)R)->value);
-    return false;
+    return false;   // none stop.
 }
 
 bool inOrderProcess(void *R) {
     printf("in-order traversal : %d\n", ((BTN_t*)R)->value);
-    return false;
+    return false;   // none stop.
 }
 
 bool postOrderProcess(void *R) {
     printf("post-order traversal : %d\n", ((BTN_t*)R)->value);
-    return false;
+    return false;   // none stop.
 }
 
