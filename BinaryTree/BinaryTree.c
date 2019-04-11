@@ -201,7 +201,9 @@ void levelOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
         BTN_t * node = deQueue(Q);
         if (node == NULL) break;
         
-        printf("level-order traversal : %d\n", node->value);
+        bool check = func(node);
+        if (check) return;
+
         if (node->left != NULL) {
             enQueue(Q, node->left);
         }
