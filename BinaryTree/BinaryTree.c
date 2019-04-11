@@ -194,7 +194,7 @@ BTN_t *findLeftmostLeefNodeOnBT(BTN_t *B) {
     return leftmost;
 }
 
-void levelOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
+bool levelOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
     QUEUE_t *Q = createQueue();
     enQueue(Q, R);
     while (true) {
@@ -202,8 +202,10 @@ void levelOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
         if (node == NULL) break;
         
         bool check = func(node);
-        if (check) return;
-
+        if (check) {
+            destroyQueue(Q, QUEUE_OPTION_WITH_ELEMENT);
+            return true;
+        }
         if (node->left != NULL) {
             enQueue(Q, node->left);
         }
@@ -212,33 +214,49 @@ void levelOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
         }
     }
     destroyQueue(Q, QUEUE_OPTION_WITH_ELEMENT);
+    return false;
 }
 
-void preOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
-    if (R == NULL) return;
+bool preOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
+    if (R == NULL) return false;
     
-    bool check = func(R);
-    if (check) return;
-    preOrderTraversalOnBT(R->left, func);
-    preOrderTraversalOnBT(R->right, func);
+    bool check = false;
+    check = func(R);
+    if (check) return true;
+    check = preOrderTraversalOnBT(R->left, func);
+    if (check) return true;
+    check = preOrderTraversalOnBT(R->right, func);
+    if (check) return true;
+
+    return false;
 }
 
-void inOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)){
-    if (R == NULL) return;
+bool inOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)){
+    if (R == NULL) return false;
     
-    inOrderTraversalOnBT(R->left, func);
-    bool check = func(R);
-    if (check) return;
-    inOrderTraversalOnBT(R->right, func);
+    bool check = false;
+    check = inOrderTraversalOnBT(R->left, func);
+    if (check) return true;;
+    check = func(R);
+    if (check) return true;
+    check = inOrderTraversalOnBT(R->right, func);
+    if (check) return true;
+
+    return false;
 }
 
-void postOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
-    if (R == NULL) return;
+bool postOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
+    if (R == NULL) return false;
     
-    postOrderTraversalOnBT(R->left, func);
-    postOrderTraversalOnBT(R->right, func);
-    bool check = func(R);
-    if (check) return;
+    bool check = false;
+    check = postOrderTraversalOnBT(R->left, func);
+    if (check) return true;
+    check = postOrderTraversalOnBT(R->right, func);
+    if (check) return true;
+    check = func(R);
+    if (check) return true;
+    
+    return false;
 }
 
 void viewBT(BTN_t *R, int type) {
