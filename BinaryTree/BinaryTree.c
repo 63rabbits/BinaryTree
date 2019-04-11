@@ -7,29 +7,22 @@
 #include "BinaryTree.h"
 
 //////////////////////////////////////////////////
-#define getParent(v) ((v - 1) / 2)
-#define getLeftIndex(v) (v * 2 + 1)
-#define getRightIndex(v) (v * 2 + 2)
-#define max(a, b) (a > b ? a : b)
-
-void *findNodeHaveOneChildOrLess(void *node);
+//  private
+void *insertElementAsChildOnBT(BTN_t *node, void *child);
 BTN_t *findNodeOnBT(BTN_t *R, int key, BT_OPTION_e option);
 void *breadthFirstFindElementOnBT(BTN_t *R, int key);
 BTN_t *breadthFirstFindNodeOnBT(BTN_t *R, int key);
 void *depthFirstFindElementOnBT(BTN_t *R, int key);
 BTN_t *depthFirstFindNodeOnBT(BTN_t *R, int key);
 BTN_t *findLeftmostLeefNodeOnBT(BTN_t *B);
-void *levelOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *));
-void *preOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *));
-void *inOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *));
-void *postOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *));
-// for debug
+//  debug
 void *convertBTtoArray(BTN_t *R);
 void insertBTtoArray(BTN_t *R, void **array, int index);
 int getHeightBT(BTN_t *R);
 int getHeightBTslave(BTN_t *R, int initValue);
 
 //////////////////////////////////////////////////
+//  public
 BTN_t *createNodeBT(int key, void *element) {
     // Block illegal parameters.
     if (element == NULL) return NULL;
@@ -66,20 +59,11 @@ BTN_t *insertElementOnBT(BTN_t *R, int key, void *element) {
     // Block illegal parameters.
     if (element == NULL) return NULL;
     
-    BTN_t *target = createNodeBT(key, element);
-    if (target == NULL) return NULL;
-    if (R == NULL) return target;
+    BTN_t *node = createNodeBT(key, element);
+    if (node == NULL) return NULL;
+    if (R == NULL) return node;
     
-    BTN_t *node = levelOrderNodeTraversalOnBT(R, findNodeHaveOneChildOrLess);
-    if (node != NULL) {
-        target->parent = node;
-        if (node->left == NULL) {
-            node->left = target;
-        }
-        else if (node->right == NULL) {
-            node->right = target;
-        }
-    }
+    levelOrderTraversalOnBT(R, insertElementAsChildOnBT, node);
     
     return R;
 }
@@ -117,6 +101,93 @@ void *findElementOnBT(BTN_t *R, int key, BT_OPTION_e option) {
     return findNode->element;
 }
 
+void *levelOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter) {
+    // Block illegal paramaters.
+    if (R == NULL) return false;
+    
+    QUEUE_t *Q = createQueue();
+    enQueue(Q, R);
+    while (true) {
+        BTN_t *node = deQueue(Q);
+        if (node == NULL) break;
+        
+        void *p = func(node, parameter);
+        if (p != NULL) {
+            destroyQueue(Q, QUEUE_OPTION_NONE);
+            return p;
+        }
+        if (node->left != NULL) {
+            enQueue(Q, node->left);
+        }
+        if (node->right != NULL) {
+            enQueue(Q, node->right);
+        }
+    }
+    destroyQueue(Q, QUEUE_OPTION_NONE);
+    return NULL;
+}
+
+void *preOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter) {
+    if (R == NULL) return NULL;
+    
+    void *p = NULL;
+    p = func(R, parameter);
+    if (p != NULL) return p;
+    p = preOrderTraversalOnBT(R->left, func, parameter);
+    if (p != NULL) return p;
+    p = preOrderTraversalOnBT(R->right, func, parameter);
+    if (p != NULL) return p;
+    
+    return NULL;
+}
+
+void *inOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter) {
+    if (R == NULL) return NULL;
+    
+    void *p = NULL;
+    p = inOrderTraversalOnBT(R->left, func, parameter);
+    if (p != NULL) return p;
+    p = func(R, parameter);
+    if (p != NULL) return p;
+    p = inOrderTraversalOnBT(R->right, func, parameter);
+    if (p != NULL) return p;
+    
+    return NULL;
+}
+
+void *postOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter) {
+    if (R == NULL) return NULL;
+    
+    void *p = NULL;
+    p = postOrderTraversalOnBT(R->left, func, parameter);
+    if (p != NULL) return p;
+    p = postOrderTraversalOnBT(R->right, func, parameter);
+    if (p != NULL) return p;
+    p = func(R, parameter);
+    if (p != NULL) return p;
+    
+    return NULL;
+}
+
+//////////////////////////////////////////////////
+//  private
+void *insertElementAsChildOnBT(BTN_t *node, void *child) {
+    if (node == NULL) return NULL;
+    
+    if (node->left == NULL) {
+        ((BTN_t *)child)->parent = node;
+        node->left = child;
+        return child;
+    }
+    if (node->right == NULL) {
+        ((BTN_t *)child)->parent = node;
+        node->right = child;
+        return child;
+    }
+    
+    return NULL;
+}
+
 BTN_t *findNodeOnBT(BTN_t *R, int key, BT_OPTION_e option) {
     switch (option) {
         case BT_OPTION_TYPE_BREADTH_FIRST_SEARCH:
@@ -126,40 +197,6 @@ BTN_t *findNodeOnBT(BTN_t *R, int key, BT_OPTION_e option) {
         default:
             break;
     }
-    return NULL;
-}
-
-void *levelOrderElementTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
-    BTN_t *node = levelOrderNodeTraversalOnBT(R, func);
-    if (node == NULL) return NULL;
-    return node->element;
-}
-
-void *preOrderElementTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
-    BTN_t *node = preOrderNodeTraversalOnBT(R, func);
-    if (node == NULL) return NULL;
-    return node->element;
-}
-
-void *inOrderElementTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
-    BTN_t *node = inOrderNodeTraversalOnBT(R, func);
-    if (node == NULL) return NULL;
-    return node->element;
-}
-
-void *postOrderElementTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
-    BTN_t *node = postOrderNodeTraversalOnBT(R, func);
-    if (node == NULL) return NULL;
-    return node->element;
-}
-
-//////////////////////////////////////////////////
-void *findNodeHaveOneChildOrLess(void *node) {
-    if (node == NULL) return NULL;
-    
-    BTN_t *parent = node;
-    if (parent->left == NULL) return parent;
-    if (parent->right == NULL) return parent;
     return NULL;
 }
 
@@ -196,13 +233,16 @@ BTN_t *breadthFirstFindNodeOnBT(BTN_t *R, int key) {
 }
 
 void *depthFirstFindElementOnBT(BTN_t *R, int key) {
-    return depthFirstFindNodeOnBT(R, key);
+    BTN_t *findNode = depthFirstFindNodeOnBT(R, key);
+    if (findNode == NULL) return NULL;
+    return findNode->element;
 }
 
 BTN_t *depthFirstFindNodeOnBT(BTN_t *R, int key) {
     // Block illegal parameters.
     if (R == NULL) return NULL;
     
+    //  pre-order traversal.
     if (R->key == key) return R;
     BTN_t *node = NULL;
     node =depthFirstFindNodeOnBT(R->left, key);
@@ -232,75 +272,13 @@ BTN_t *findLeftmostLeefNodeOnBT(BTN_t *B) {
     return leftmost;
 }
 
-void *levelOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
-    // Block illegal paramaters.
-    if (R == NULL) return false;
-    
-    QUEUE_t *Q = createQueue();
-    enQueue(Q, R);
-    while (true) {
-        BTN_t *node = deQueue(Q);
-        if (node == NULL) break;
-        
-        void *findNode = func(node);
-        if (findNode != NULL) {
-            destroyQueue(Q, QUEUE_OPTION_NONE);
-            return findNode;
-        }
-        if (node->left != NULL) {
-            enQueue(Q, node->left);
-        }
-        if (node->right != NULL) {
-            enQueue(Q, node->right);
-        }
-    }
-    destroyQueue(Q, QUEUE_OPTION_NONE);
-    return NULL;
-}
-
-void *preOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
-    if (R == NULL) return NULL;
-    
-    void *node = NULL;
-    node = func(R);
-    if (node != NULL) return node;
-    node = preOrderNodeTraversalOnBT(R->left, func);
-    if (node != NULL) return node;
-    node = preOrderNodeTraversalOnBT(R->right, func);
-    if (node != NULL) return node;
-    
-    return NULL;
-}
-
-void *inOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
-    if (R == NULL) return NULL;
-    
-    void *node = NULL;
-    node = inOrderNodeTraversalOnBT(R->left, func);
-    if (node != NULL) return node;
-    node = func(R);
-    if (node != NULL) return node;
-    node = inOrderNodeTraversalOnBT(R->right, func);
-    if (node != NULL) return node;
-    
-    return NULL;
-}
-
-void *postOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
-    if (R == NULL) return NULL;
-    
-    void *node = NULL;
-    node = postOrderNodeTraversalOnBT(R->left, func);
-    if (node != NULL) return node;
-    node = postOrderNodeTraversalOnBT(R->right, func);
-    if (node != NULL) return node;
-    node = func(R);
-    if (node != NULL) return node;
-    
-    return NULL;
-}
-
 //////////////////////////////////////////////////
+//  debug
+#define getParent(v) ((v - 1) / 2)
+#define getLeftIndex(v) (v * 2 + 1)
+#define getRightIndex(v) (v * 2 + 2)
+#define max(a, b) (a > b ? a : b)
+
 void viewBT(BTN_t *R, BT_OPTION_e option) {
     int wordWidth = 4;
     if (option == BT_OPTION_VIEW_CHAR) {

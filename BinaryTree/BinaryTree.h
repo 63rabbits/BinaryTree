@@ -30,10 +30,10 @@ bool destroyNodeBT(BTN_t *R, int option);
 BTN_t *insertElementOnBT(BTN_t *R, int key, void *element);
 bool deleteElementOnBT(BTN_t *R, int key);
 void *findElementOnBT(BTN_t *R, int key, BT_OPTION_e option);
-void *levelOrderElementTraversalOnBT(BTN_t *R, void *(*func)(void *));
-void *preOrderElementTraversalOnBT(BTN_t *R, void *(*func)(void *));
-void *inOrderElementTraversalOnBT(BTN_t *R, void *(*func)(void *));
-void *postOrderElementTraversalOnBT(BTN_t *R, void *(*func)(void *));
+void *levelOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter);
+void *preOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter);
+void *inOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter);
+void *postOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter);
 // for debug
 void viewBT(BTN_t *R, BT_OPTION_e option);
 
