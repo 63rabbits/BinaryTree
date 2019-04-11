@@ -17,10 +17,10 @@ typedef struct Element {
 void test(void);
 Element_t *createElement(int value);
 bool destroyElement(Element_t *element);
-bool levelOrderProcess(void *R);
-bool preOrderProcess(void *R);
-bool inOrderProcess(void *R);
-bool postOrderProcess(void *R);
+void *levelOrderProcess(void *R);
+void *preOrderProcess(void *R);
+void *inOrderProcess(void *R);
+void *postOrderProcess(void *R);
 
 //////////////////////////////////////////////////
 int main(int argc, const char * argv[]) {
@@ -39,13 +39,13 @@ int main(int argc, const char * argv[]) {
 
 void test() {
     int numNode = 10;
-    int findValue = 5;
-    int deleteValue = 2;
+    int findKey = 5;
+    int deleteKey = 2;
     
     BTN_t *root = NULL;
     for (int i=0; i<numNode; i++) {
         Element_t *element = createElement(i*10);
-        root = insertElementIntoBT(root, i, element);
+        root = insertElementOnBT(root, i, element);
         if (root == NULL) {
             printf("error [%s] : could not insert %d.\n", __func__, i);
             destroyElement(element);
@@ -56,34 +56,34 @@ void test() {
     viewBT(root, BT_OPTION_VIEW_INT);
 
     printf("*** level-order traversal ***\n");
-    levelOrderTraversalOnBT(root, levelOrderProcess);
+    levelOrderElementTraversalOnBT(root, levelOrderProcess);
     
     printf("*** pre-order traversal ***\n");
-    preOrderTraversalOnBT(root, preOrderProcess);
+    preOrderElementTraversalOnBT(root, preOrderProcess);
     
     printf("*** in-order traversal ***\n");
-    inOrderTraversalOnBT(root, inOrderProcess);
+    inOrderElementTraversalOnBT(root, inOrderProcess);
     
     printf("*** post-order traversal ***\n");
-    postOrderTraversalOnBT(root, postOrderProcess);
+    postOrderElementTraversalOnBT(root, postOrderProcess);
     
     printf("*** breadth first find ***\n");
-    int value = findElementOnBT(root, findValue, BT_OPTION_TYPE_BREADTH_FIRST_SEARCH);
-    printf("breadth first find %d [%s] : found value = %d\n", findValue, __func__, value);
+    Element_t *element1 = findElementOnBT(root, findKey, BT_OPTION_TYPE_BREADTH_FIRST_SEARCH);
+    printf("breadth first find key %d [%s] : found value = %d\n", findKey, __func__, element1->value);
     
     printf("*** depth first find ***\n");
-    value = findElementOnBT(root, findValue, BT_OPTION_TYPE_DEPTH_FIRST_SEARCH);
-    printf("depth first find %d [%s] : found value = %d\n", findValue, __func__, value);
+    Element_t *element2 = findElementOnBT(root, findKey, BT_OPTION_TYPE_DEPTH_FIRST_SEARCH);
+    printf("depth first find key %d [%s] : found value = %d\n", findKey, __func__, element2->value);
     
     printf("*** delete ***\n");
     printf("--- Binary Tree ---\n");
     viewBT(root, BT_OPTION_VIEW_INT);
-    bool check = deleteElementFromBT(root, deleteValue);
+    bool check = deleteElementOnBT(root, deleteKey);
     if (check) {
-        printf("delete value %d [%s] : success.\n", deleteValue, __func__);
+        printf("delete key %d [%s] : success.\n", deleteKey, __func__);
     }
     else {
-        printf("error [%s] : could not delete value %d.\n", __func__, deleteValue);
+        printf("error [%s] : could not delete key %d.\n", __func__, deleteKey);
     }
 //    printf("*** level-order traversal ***\n");
 //    levelOrderTraversalOnBT(root);
@@ -107,23 +107,23 @@ bool destroyElement(Element_t *element) {
     return true;
 }
 
-bool levelOrderProcess(void *R) {
-    printf("level-order traversal : %d\n", ((BTN_t*)R)->value);
-    return false;   // none stop.
+void *levelOrderProcess(void *R) {
+    printf("level-order traversal : %d\n", ((BTN_t*)R)->key);
+    return NULL;    // none stop.
 }
 
-bool preOrderProcess(void *R) {
-    printf("pre-order traversal : %d\n", ((BTN_t*)R)->value);
-    return false;   // none stop.
+void *preOrderProcess(void *R) {
+    printf("pre-order traversal : %d\n", ((BTN_t*)R)->key);
+    return NULL;    // none stop.
 }
 
-bool inOrderProcess(void *R) {
-    printf("in-order traversal : %d\n", ((BTN_t*)R)->value);
-    return false;   // none stop.
+void *inOrderProcess(void *R) {
+    printf("in-order traversal : %d\n", ((BTN_t*)R)->key);
+    return NULL;    // none stop.
 }
 
-bool postOrderProcess(void *R) {
-    printf("post-order traversal : %d\n", ((BTN_t*)R)->value);
-    return false;   // none stop.
+void *postOrderProcess(void *R) {
+    printf("post-order traversal : %d\n", ((BTN_t*)R)->key);
+    return NULL;    // none stop.
 }
 

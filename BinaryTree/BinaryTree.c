@@ -12,15 +12,32 @@
 #define getRightIndex(v) (v * 2 + 2)
 #define max(a, b) (a > b ? a : b)
 
+void *findNodeHaveOneChildOrLess(void *node);
+BTN_t *findNodeOnBT(BTN_t *R, int key, BT_OPTION_e option);
+void *breadthFirstFindElementOnBT(BTN_t *R, int key);
+BTN_t *breadthFirstFindNodeOnBT(BTN_t *R, int key);
+void *depthFirstFindElementOnBT(BTN_t *R, int key);
+BTN_t *depthFirstFindNodeOnBT(BTN_t *R, int key);
+BTN_t *findLeftmostLeefNodeOnBT(BTN_t *B);
+void *levelOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *));
+void *preOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *));
+void *inOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *));
+void *postOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *));
+// for debug
+void *convertBTtoArray(BTN_t *R);
+void insertBTtoArray(BTN_t *R, void **array, int index);
+int getHeightBT(BTN_t *R);
+int getHeightBTslave(BTN_t *R, int initValue);
+
 //////////////////////////////////////////////////
-BTN_t *createNodeBT(int value, void *element) {
+BTN_t *createNodeBT(int key, void *element) {
     // Block illegal parameters.
     if (element == NULL) return NULL;
     
     BTN_t *node = malloc(sizeof(BTN_t));
     if (node == NULL) return NULL;
     
-    node->value = value;
+    node->key = key;
     node->element = element;
     node->parent = NULL;
     node->left = NULL;
@@ -45,51 +62,40 @@ bool destroyNodeBT(BTN_t *R, int option) {
     return true;
 }
 
-BTN_t *insertElementIntoBT(BTN_t *R, int value, void *element) {
+BTN_t *insertElementOnBT(BTN_t *R, int key, void *element) {
     // Block illegal parameters.
     if (element == NULL) return NULL;
     
-    BTN_t *target = createNodeBT(value, element);
+    BTN_t *target = createNodeBT(key, element);
     if (target == NULL) return NULL;
     if (R == NULL) return target;
     
-    //　level-order traversal.
-    QUEUE_t *Q = createQueue();
-    enQueue(Q, R);
-    while (true) {
-        BTN_t *node = deQueue(Q);
-        if (node == NULL) break;
-        
+    BTN_t *node = levelOrderNodeTraversalOnBT(R, findNodeHaveOneChildOrLess);
+    if (node != NULL) {
+        target->parent = node;
         if (node->left == NULL) {
-            target->parent = node;
             node->left = target;
-            break;
         }
-        if (node->right == NULL) {
-            target->parent = node;
+        else if (node->right == NULL) {
             node->right = target;
-            break;
         }
-        enQueue(Q, node->left);
-        enQueue(Q, node->right);
     }
-    destroyQueue(Q, QUEUE_OPTION_NONE);
     
     return R;
 }
 
-bool deleteElementFromBT(BTN_t *R, int value) {
+bool deleteElementOnBT(BTN_t *R, int key) {
     // Block illegal parameters.
     if (R == NULL) return false;
     
     //    Consider a subtree rooted at the node to be deleted.
     //    Replace the deletion node with the leftmost leaf of the subtree.
-    BTN_t *target = findNodeOnBT(R, value, BT_OPTION_TYPE_BREADTH_FIRST_SEARCH);
+    BTN_t *target = findNodeOnBT(R, key, BT_OPTION_TYPE_BREADTH_FIRST_SEARCH);
     if (target == NULL) return false;
     BTN_t *leftmost = findLeftmostLeefNodeOnBT(target);
 
     // change a value and element of target node. then delete a leftmost node.
-    target->value = leftmost->value;
+    target->key = leftmost->key;
     free(target->element);
     target->element = leftmost->element;
     if (leftmost->parent != NULL) {
@@ -105,31 +111,65 @@ bool deleteElementFromBT(BTN_t *R, int value) {
     return true;
 }
 
-int findElementOnBT(BTN_t *R, int value, int type) {
-    BTN_t *findNode = findNodeOnBT(R, value, type);
-    if (findNode == NULL) return -1;
-    return findNode->value;
+void *findElementOnBT(BTN_t *R, int key, BT_OPTION_e option) {
+    BTN_t *findNode = findNodeOnBT(R, key, option);
+    if (findNode == NULL) return NULL;
+    return findNode->element;
 }
 
-BTN_t *findNodeOnBT(BTN_t *R, int value, int type) {
-    switch (type) {
+BTN_t *findNodeOnBT(BTN_t *R, int key, BT_OPTION_e option) {
+    switch (option) {
         case BT_OPTION_TYPE_BREADTH_FIRST_SEARCH:
-            return breadthFirstFindNodeOnBT(R, value);
+            return breadthFirstFindNodeOnBT(R, key);
         case BT_OPTION_TYPE_DEPTH_FIRST_SEARCH:
-            return depthFirstFindNodeOnBT(R, value);
+            return depthFirstFindNodeOnBT(R, key);
         default:
             break;
     }
     return NULL;
 }
 
-int breadthFirstFindElementOnBT(BTN_t *R, int value) {
-    BTN_t *findNode = breadthFirstFindNodeOnBT(R, value);
-    if (findNode == NULL) return -1;
-    return findNode->value;
+void *levelOrderElementTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
+    BTN_t *node = levelOrderNodeTraversalOnBT(R, func);
+    if (node == NULL) return NULL;
+    return node->element;
 }
 
-BTN_t *breadthFirstFindNodeOnBT(BTN_t *R, int value) {
+void *preOrderElementTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
+    BTN_t *node = preOrderNodeTraversalOnBT(R, func);
+    if (node == NULL) return NULL;
+    return node->element;
+}
+
+void *inOrderElementTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
+    BTN_t *node = inOrderNodeTraversalOnBT(R, func);
+    if (node == NULL) return NULL;
+    return node->element;
+}
+
+void *postOrderElementTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
+    BTN_t *node = postOrderNodeTraversalOnBT(R, func);
+    if (node == NULL) return NULL;
+    return node->element;
+}
+
+//////////////////////////////////////////////////
+void *findNodeHaveOneChildOrLess(void *node) {
+    if (node == NULL) return NULL;
+    
+    BTN_t *parent = node;
+    if (parent->left == NULL) return parent;
+    if (parent->right == NULL) return parent;
+    return NULL;
+}
+
+void *breadthFirstFindElementOnBT(BTN_t *R, int key) {
+    BTN_t *findNode = breadthFirstFindNodeOnBT(R, key);
+    if (findNode == NULL) return NULL;
+    return findNode->element;
+}
+
+BTN_t *breadthFirstFindNodeOnBT(BTN_t *R, int key) {
     // Block illegal parameters.
     if (R == NULL) return NULL;
     //　level-order traversal.
@@ -140,7 +180,7 @@ BTN_t *breadthFirstFindNodeOnBT(BTN_t *R, int value) {
         BTN_t * node = deQueue(Q);
         if (node == NULL) break;
         
-        if (node->value == value) {
+        if (node->key == key) {
             findNode = node;
             break;
         }
@@ -155,21 +195,19 @@ BTN_t *breadthFirstFindNodeOnBT(BTN_t *R, int value) {
     return findNode;
 }
 
-int depthFirstFindElementOnBT(BTN_t *R, int value) {
-    BTN_t *findNode = depthFirstFindNodeOnBT(R, value);
-    if (findNode == NULL) return -1;
-    return findNode->value;
+void *depthFirstFindElementOnBT(BTN_t *R, int key) {
+    return depthFirstFindNodeOnBT(R, key);
 }
 
-BTN_t *depthFirstFindNodeOnBT(BTN_t *R, int value) {
+BTN_t *depthFirstFindNodeOnBT(BTN_t *R, int key) {
     // Block illegal parameters.
     if (R == NULL) return NULL;
     
-    if (R->value == value) return R;
+    if (R->key == key) return R;
     BTN_t *node = NULL;
-    node =depthFirstFindNodeOnBT(R->left, value);
+    node =depthFirstFindNodeOnBT(R->left, key);
     if (node != NULL) return node;
-    node = depthFirstFindNodeOnBT(R->right, value);
+    node = depthFirstFindNodeOnBT(R->right, key);
     if (node != NULL) return node;
     
     return NULL;
@@ -194,17 +232,20 @@ BTN_t *findLeftmostLeefNodeOnBT(BTN_t *B) {
     return leftmost;
 }
 
-bool levelOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
+void *levelOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
+    // Block illegal paramaters.
+    if (R == NULL) return false;
+    
     QUEUE_t *Q = createQueue();
     enQueue(Q, R);
     while (true) {
-        BTN_t * node = deQueue(Q);
+        BTN_t *node = deQueue(Q);
         if (node == NULL) break;
         
-        bool check = func(node);
-        if (check) {
-            destroyQueue(Q, QUEUE_OPTION_WITH_ELEMENT);
-            return true;
+        void *findNode = func(node);
+        if (findNode != NULL) {
+            destroyQueue(Q, QUEUE_OPTION_NONE);
+            return findNode;
         }
         if (node->left != NULL) {
             enQueue(Q, node->left);
@@ -213,55 +254,56 @@ bool levelOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
             enQueue(Q, node->right);
         }
     }
-    destroyQueue(Q, QUEUE_OPTION_WITH_ELEMENT);
-    return false;
+    destroyQueue(Q, QUEUE_OPTION_NONE);
+    return NULL;
 }
 
-bool preOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
-    if (R == NULL) return false;
+void *preOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
+    if (R == NULL) return NULL;
     
-    bool check = false;
-    check = func(R);
-    if (check) return true;
-    check = preOrderTraversalOnBT(R->left, func);
-    if (check) return true;
-    check = preOrderTraversalOnBT(R->right, func);
-    if (check) return true;
-
-    return false;
+    void *node = NULL;
+    node = func(R);
+    if (node != NULL) return node;
+    node = preOrderNodeTraversalOnBT(R->left, func);
+    if (node != NULL) return node;
+    node = preOrderNodeTraversalOnBT(R->right, func);
+    if (node != NULL) return node;
+    
+    return NULL;
 }
 
-bool inOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)){
-    if (R == NULL) return false;
+void *inOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
+    if (R == NULL) return NULL;
     
-    bool check = false;
-    check = inOrderTraversalOnBT(R->left, func);
-    if (check) return true;;
-    check = func(R);
-    if (check) return true;
-    check = inOrderTraversalOnBT(R->right, func);
-    if (check) return true;
-
-    return false;
+    void *node = NULL;
+    node = inOrderNodeTraversalOnBT(R->left, func);
+    if (node != NULL) return node;
+    node = func(R);
+    if (node != NULL) return node;
+    node = inOrderNodeTraversalOnBT(R->right, func);
+    if (node != NULL) return node;
+    
+    return NULL;
 }
 
-bool postOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
-    if (R == NULL) return false;
+void *postOrderNodeTraversalOnBT(BTN_t *R, void *(*func)(void *)) {
+    if (R == NULL) return NULL;
     
-    bool check = false;
-    check = postOrderTraversalOnBT(R->left, func);
-    if (check) return true;
-    check = postOrderTraversalOnBT(R->right, func);
-    if (check) return true;
-    check = func(R);
-    if (check) return true;
+    void *node = NULL;
+    node = postOrderNodeTraversalOnBT(R->left, func);
+    if (node != NULL) return node;
+    node = postOrderNodeTraversalOnBT(R->right, func);
+    if (node != NULL) return node;
+    node = func(R);
+    if (node != NULL) return node;
     
-    return false;
+    return NULL;
 }
 
-void viewBT(BTN_t *R, int type) {
+//////////////////////////////////////////////////
+void viewBT(BTN_t *R, BT_OPTION_e option) {
     int wordWidth = 4;
-    if (type == BT_OPTION_VIEW_CHAR) {
+    if (option == BT_OPTION_VIEW_CHAR) {
         wordWidth = 2;
     }
     int height = getHeightBT(R);
@@ -298,11 +340,11 @@ void viewBT(BTN_t *R, int type) {
         }
         for (int j=leftmostIndex; j<=rightmostIndex; j++) {
             if (array[j] != NULL) {
-                if (type == BT_OPTION_VIEW_INT) {
-                    sprintf(view[i], format10, view[i], ((BTN_t *)array[j])->value);
+                if (option == BT_OPTION_VIEW_INT) {
+                    sprintf(view[i], format10, view[i], ((BTN_t *)array[j])->key);
                 }
                 else {
-                    sprintf(view[i], format11, view[i], (char)((BTN_t *)array[j])->value);
+                    sprintf(view[i], format11, view[i], (char)((BTN_t *)array[j])->key);
                 }
             }
             else {
