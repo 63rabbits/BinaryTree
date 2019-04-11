@@ -17,6 +17,10 @@ typedef struct Element {
 void test(void);
 Element_t *createElement(int value);
 bool destroyElement(Element_t *element);
+bool levelOrderProcess(void *R);
+bool preOrderProcess(void *R);
+bool inOrderProcess(void *R);
+bool postOrderProcess(void *R);
 
 //////////////////////////////////////////////////
 int main(int argc, const char * argv[]) {
@@ -52,16 +56,16 @@ void test() {
     viewBT(root, BT_OPTION_VIEW_INT);
 
     printf("*** level-order traversal ***\n");
-    levelOrderTraversalOnBT(root);
+    levelOrderTraversalOnBT(root, levelOrderProcess);
     
     printf("*** pre-order traversal ***\n");
-    preOrderTraversalOnBT(root);
+    preOrderTraversalOnBT(root, preOrderProcess);
     
     printf("*** in-order traversal ***\n");
-    inOrderTraversalOnBT(root);
+    inOrderTraversalOnBT(root, inOrderProcess);
     
     printf("*** post-order traversal ***\n");
-    postOrderTraversalOnBT(root);
+    postOrderTraversalOnBT(root, postOrderProcess);
     
     printf("*** breadth first find ***\n");
     int value = findElementOnBT(root, findValue, BT_OPTION_TYPE_BREADTH_FIRST_SEARCH);
@@ -102,3 +106,24 @@ bool destroyElement(Element_t *element) {
     free(element);
     return true;
 }
+
+bool levelOrderProcess(void *R) {
+    printf("level-order traversal : %d\n", ((BTN_t*)R)->value);
+    return false;
+}
+
+bool preOrderProcess(void *R) {
+    printf("pre-order traversal : %d\n", ((BTN_t*)R)->value);
+    return false;
+}
+
+bool inOrderProcess(void *R) {
+    printf("in-order traversal : %d\n", ((BTN_t*)R)->value);
+    return false;
+}
+
+bool postOrderProcess(void *R) {
+    printf("post-order traversal : %d\n", ((BTN_t*)R)->value);
+    return false;
+}
+

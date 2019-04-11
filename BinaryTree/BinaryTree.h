@@ -5,11 +5,6 @@
 #include "Queue.h"
 
 //////////////////////////////////////////////////
-#define getParent(v) ((v - 1) / 2)
-#define getLeftIndex(v) (v * 2 + 1)
-#define getRightIndex(v) (v * 2 + 2)
-#define max(a, b) (a > b ? a : b)
-
 typedef enum BTOption {
     BT_OPTION_NONE,
     BT_OPTION_WITH_ELEMENT,
@@ -39,10 +34,10 @@ BTN_t *breadthFirstFindNodeOnBT(BTN_t *R, int value);
 int depthFirstFindElementOnBT(BTN_t *R, int value);
 BTN_t *depthFirstFindNodeOnBT(BTN_t *R, int value);
 BTN_t *findLeftmostLeefNodeOnBT(BTN_t *B);
-void levelOrderTraversalOnBT(BTN_t *R);
-void preOrderTraversalOnBT(BTN_t *R);
-void inOrderTraversalOnBT(BTN_t *R);
-void postOrderTraversalOnBT(BTN_t *R);
+void levelOrderTraversalOnBT(BTN_t *R, bool (*func)(void *));
+void preOrderTraversalOnBT(BTN_t *R, bool (*func)(void *));
+void inOrderTraversalOnBT(BTN_t *R, bool (*func)(void *));
+void postOrderTraversalOnBT(BTN_t *R, bool (*func)(void *));
 void viewBT(BTN_t *R, int type);
 void *convertBTtoArray(BTN_t *R);
 void insertBTtoArray(BTN_t *R, void **array, int index);

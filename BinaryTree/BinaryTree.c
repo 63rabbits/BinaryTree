@@ -7,6 +7,12 @@
 #include "BinaryTree.h"
 
 //////////////////////////////////////////////////
+#define getParent(v) ((v - 1) / 2)
+#define getLeftIndex(v) (v * 2 + 1)
+#define getRightIndex(v) (v * 2 + 2)
+#define max(a, b) (a > b ? a : b)
+
+//////////////////////////////////////////////////
 BTN_t *createNodeBT(int value, void *element) {
     // Block illegal parameters.
     if (element == NULL) return NULL;
@@ -50,15 +56,16 @@ BTN_t *insertElementIntoBT(BTN_t *R, int value, void *element) {
     //　level-order traversal.
     QUEUE_t *Q = createQueue();
     enQueue(Q, R);
-    while (!isEmptyQueue(Q)) {
+    while (true) {
         BTN_t *node = deQueue(Q);
+        if (node == NULL) break;
         
         if (node->left == NULL) {
             target->parent = node;
             node->left = target;
             break;
         }
-        else if (node->right == NULL) {
+        if (node->right == NULL) {
             target->parent = node;
             node->right = target;
             break;
@@ -129,8 +136,10 @@ BTN_t *breadthFirstFindNodeOnBT(BTN_t *R, int value) {
     BTN_t *findNode = NULL;
     QUEUE_t *Q = createQueue();
     enQueue(Q, R);
-    while (!isEmptyQueue(Q)) {
+    while (true) {
         BTN_t * node = deQueue(Q);
+        if (node == NULL) break;
+        
         if (node->value == value) {
             findNode = node;
             break;
@@ -166,11 +175,32 @@ BTN_t *depthFirstFindNodeOnBT(BTN_t *R, int value) {
     return NULL;
 }
 
-void levelOrderTraversalOnBT(BTN_t *R) {
+BTN_t *findLeftmostLeefNodeOnBT(BTN_t *B) {
+    BTN_t *parent = NULL;
+    BTN_t *leftmost = B;
+    while (true) {
+        if (leftmost->left != NULL) {
+            parent = leftmost;
+            leftmost = leftmost->left;
+            continue;
+        }
+        if (leftmost->right != NULL) {
+            parent = leftmost;
+            leftmost = leftmost->right;
+            continue;
+        }
+        break;
+    }
+    return leftmost;
+}
+
+void levelOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
     QUEUE_t *Q = createQueue();
     enQueue(Q, R);
-    while (!isEmptyQueue(Q)) {
+    while (true) {
         BTN_t * node = deQueue(Q);
+        if (node == NULL) break;
+        
         printf("level-order traversal : %d\n", node->value);
         if (node->left != NULL) {
             enQueue(Q, node->left);
@@ -182,48 +212,31 @@ void levelOrderTraversalOnBT(BTN_t *R) {
     destroyQueue(Q, QUEUE_OPTION_WITH_ELEMENT);
 }
 
-BTN_t *findLeftmostLeefNodeOnBT(BTN_t *B) {
-    BTN_t *parent = NULL;
-    BTN_t *leftmost = B;
-    while (true) {
-        if (leftmost->left != NULL) {
-            parent = leftmost;
-            leftmost = leftmost->left;
-            continue;
-        }
-        else if (leftmost->right != NULL) {
-            parent = leftmost;
-            leftmost = leftmost->right;
-            continue;
-        }
-        break;
-    }
-    return leftmost;
+void preOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
+    if (R == NULL) return;
+    
+    bool check = func(R);
+    if (check) return;
+    preOrderTraversalOnBT(R->left, func);
+    preOrderTraversalOnBT(R->right, func);
 }
 
-void preOrderTraversalOnBT(BTN_t *R) {
+void inOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)){
     if (R == NULL) return;
     
-    printf("pre-order traversal : %d\n", R->value);
-    preOrderTraversalOnBT(R->left);
-    preOrderTraversalOnBT(R->right);
+    inOrderTraversalOnBT(R->left, func);
+    bool check = func(R);
+    if (check) return;
+    inOrderTraversalOnBT(R->right, func);
 }
 
-void inOrderTraversalOnBT(BTN_t *R){
+void postOrderTraversalOnBT(BTN_t *R, bool (*func)(void *)) {
     if (R == NULL) return;
     
-    inOrderTraversalOnBT(R->left);
-    printf("in-order traversal : %d\n", R->value);
-    inOrderTraversalOnBT(R->right);
-    
-}
-void postOrderTraversalOnBT(BTN_t *R) {
-    if (R == NULL) return;
-    
-    postOrderTraversalOnBT(R->left);
-    postOrderTraversalOnBT(R->right);
-    printf("post-order traversal : %d\n", R->value);
-    
+    postOrderTraversalOnBT(R->left, func);
+    postOrderTraversalOnBT(R->right, func);
+    bool check = func(R);
+    if (check) return;
 }
 
 void viewBT(BTN_t *R, int type) {
@@ -294,7 +307,6 @@ void viewBT(BTN_t *R, int type) {
 
 void *convertBTtoArray(BTN_t *R) {
     int height = getHeightBT(R);
-    //        printf("height = %d\n", height);    // debug
     if (height < 0) return NULL;
     
     int length = pow(2, height+1) - 1;
