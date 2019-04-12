@@ -44,7 +44,7 @@ void test() {
     
     BTN_t *root = NULL;
     for (int i=0; i<numNode; i++) {
-        Element_t *element = createElement(i*10);
+        Element_t *element = createElement(i);
         root = insertElementOnBT(root, i, element);
         if (root == NULL) {
             printf("error [%s] : could not insert %d.\n", __func__, i);
@@ -106,22 +106,30 @@ bool destroyElement(Element_t *element) {
 }
 
 void *levelOrderTraversalOnBTslave(BTN_t *R, void *parameter) {
-    printf("level-order traversal : %d\n", R->keyValue);
+    Element_t *element = getElementInNodeOnBT(R);
+
+    printf("level-order traversal : %d\n", element->value);
     return NULL;    // none stop.
 }
 
 void *preOrderTraversalOnBTslave(BTN_t *R, void *parameter) {
-    printf("pre-order traversal : %d\n", R->keyValue);
+    Element_t *element = getElementInNodeOnBT(R);
+
+    printf("pre-order traversal : %d\n", element->value);
     return NULL;    // none stop.
 }
 
 void *inOrderTraversalOnBTslave(BTN_t *R, void *parameter) {
-    printf("in-order traversal : %d\n", R->keyValue);
+    Element_t *element = getElementInNodeOnBT(R);
+
+    printf("in-order traversal : %d\n", element->value);
     return NULL;    // none stop.
 }
 
 void *postOrderTraversalOnBTslave(BTN_t *R, void *parameter) {
-    printf("post-order traversal : %d\n", R->keyValue);
+    Element_t *element = getElementInNodeOnBT(R);
+
+    printf("post-order traversal : %d\n", element->value);
     return NULL;    // none stop.
 }
 

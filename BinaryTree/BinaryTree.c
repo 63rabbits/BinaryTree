@@ -161,6 +161,13 @@ int getHeightBT(BTN_t *R) {
     return getHeightBTslave(R, -1);
 }
 
+void *getElementInNodeOnBT(BTN_t *R) {
+    // Block illegal parameters.
+    if (R == NULL) return NULL;
+    
+    return R->element;
+}
+
 //////////////////////////////////////////////////
 //  private
 BTN_t *findNodeOnBT(BTN_t *R, int keyValue, BT_OPTION_e option) {
@@ -199,28 +206,31 @@ BTN_t *findLeftmostLeefNodeOnBT(BTN_t *B) {
     return leftmost;
 }
 
-void *insertElementOnBTslave(BTN_t *R, void *child) {
+void *insertElementOnBTslave(BTN_t *R, void *parameter) {
     if (R == NULL) return NULL;
     
-    if (R->left == NULL) {
-        ((BTN_t *)child)->parent = R;
-        R->left = child;
+    BTN_t *parent = R;
+    BTN_t *child = parameter;
+    if (parent->left == NULL) {
+        child->parent = parent;
+        parent->left = child;
         return child;
     }
-    if (R->right == NULL) {
-        ((BTN_t *)child)->parent = R;
-        R->right = child;
+    if (parent->right == NULL) {
+        child->parent = parent;
+        parent->right = child;
         return child;
     }
     
     return NULL;
 }
 
-void *destroyNodeBTslave(BTN_t *R, void *option) {
+void *destroyNodeBTslave(BTN_t *R, void *parameter) {
     // Block illegal parameters.
     if (R == NULL) return NULL;
     
-    if ((*((int*)option) == BT_OPTION_WITH_ELEMENT) &&
+    int option = *((int *)parameter);
+    if ((option == BT_OPTION_WITH_ELEMENT) &&
         (R->element != NULL)) {
         free(R->element);
     }

@@ -35,6 +35,7 @@ void *preOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parame
 void *inOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter);
 void *postOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter);
 int getHeightBT(BTN_t *R);
+void *getElementInNodeOnBT(BTN_t *R);
 // for debug
 void viewBT(BTN_t *R, BT_OPTION_e option);
 
