@@ -26,7 +26,7 @@ typedef struct BinaryTeee_Node {
 
 //////////////////////////////////////////////////
 BTN_t *createNodeBT(int keyValue, void *element);
-bool destroyNodeBT(BTN_t *R, int option);
+bool destroyNodeBT(BTN_t *R, BT_OPTION_e option);
 BTN_t *insertElementOnBT(BTN_t *R, int keyValue, void *element);
 bool deleteElementOnBT(BTN_t *R, int keyValue);
 void *findElementOnBT(BTN_t *R, int keyValue, BT_OPTION_e option);
@@ -34,6 +34,7 @@ void *levelOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *para
 void *preOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter);
 void *inOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter);
 void *postOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter);
+int getHeightBT(BTN_t *R);
 // for debug
 void viewBT(BTN_t *R, BT_OPTION_e option);
 

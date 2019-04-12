@@ -17,10 +17,10 @@ typedef struct Element {
 void test(void);
 Element_t *createElement(int value);
 bool destroyElement(Element_t *element);
-void *levelOrderProcess(BTN_t *R, void *parameter);
-void *preOrderProcess(BTN_t *R, void *parameter);
-void *inOrderProcess(BTN_t *R, void *parameter);
-void *postOrderProcess(BTN_t *R, void *parameter);
+void *levelOrderTraversalOnBTslave(BTN_t *R, void *parameter);
+void *preOrderTraversalOnBTslave(BTN_t *R, void *parameter);
+void *inOrderTraversalOnBTslave(BTN_t *R, void *parameter);
+void *postOrderTraversalOnBTslave(BTN_t *R, void *parameter);
 
 //////////////////////////////////////////////////
 int main(int argc, const char * argv[]) {
@@ -56,16 +56,16 @@ void test() {
     viewBT(root, BT_OPTION_VIEW_INT);
 
     printf("*** level-order traversal ***\n");
-    levelOrderTraversalOnBT(root, levelOrderProcess, NULL);
+    levelOrderTraversalOnBT(root, levelOrderTraversalOnBTslave, NULL);
     
     printf("*** pre-order traversal ***\n");
-    preOrderTraversalOnBT(root, preOrderProcess, NULL);
+    preOrderTraversalOnBT(root, preOrderTraversalOnBTslave, NULL);
     
     printf("*** in-order traversal ***\n");
-    inOrderTraversalOnBT(root, inOrderProcess, NULL);
+    inOrderTraversalOnBT(root, inOrderTraversalOnBTslave, NULL);
     
     printf("*** post-order traversal ***\n");
-    postOrderTraversalOnBT(root, postOrderProcess, NULL);
+    postOrderTraversalOnBT(root, postOrderTraversalOnBTslave, NULL);
     
     printf("*** breadth first find ***\n");
     Element_t *element1 = findElementOnBT(root, findKey, BT_OPTION_TYPE_BREADTH_FIRST_SEARCH);
@@ -105,22 +105,22 @@ bool destroyElement(Element_t *element) {
     return true;
 }
 
-void *levelOrderProcess(BTN_t *R, void *parameter) {
+void *levelOrderTraversalOnBTslave(BTN_t *R, void *parameter) {
     printf("level-order traversal : %d\n", R->keyValue);
     return NULL;    // none stop.
 }
 
-void *preOrderProcess(BTN_t *R, void *parameter) {
+void *preOrderTraversalOnBTslave(BTN_t *R, void *parameter) {
     printf("pre-order traversal : %d\n", R->keyValue);
     return NULL;    // none stop.
 }
 
-void *inOrderProcess(BTN_t *R, void *parameter) {
+void *inOrderTraversalOnBTslave(BTN_t *R, void *parameter) {
     printf("in-order traversal : %d\n", R->keyValue);
     return NULL;    // none stop.
 }
 
-void *postOrderProcess(BTN_t *R, void *parameter) {
+void *postOrderTraversalOnBTslave(BTN_t *R, void *parameter) {
     printf("post-order traversal : %d\n", R->keyValue);
     return NULL;    // none stop.
 }

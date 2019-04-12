@@ -16,7 +16,6 @@ void *findNodeOnBTslave(BTN_t *R, void *option);
 //  debug
 void *convertBTtoArray(BTN_t *R);
 void insertBTtoArray(BTN_t *R, void **array, int index);
-int getHeightBT(BTN_t *R);
 int getHeightBTslave(BTN_t *R, int initValue);
 
 //////////////////////////////////////////////////
@@ -36,7 +35,7 @@ BTN_t *createNodeBT(int keyValue, void *element) {
     return node;
 }
 
-bool destroyNodeBT(BTN_t *R, int option) {
+bool destroyNodeBT(BTN_t *R, BT_OPTION_e option) {
     // Block illegal parameters
     if (R == NULL) return false;
     
@@ -158,6 +157,10 @@ void *postOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *param
     return NULL;
 }
 
+int getHeightBT(BTN_t *R) {
+    return getHeightBTslave(R, -1);
+}
+
 //////////////////////////////////////////////////
 //  private
 BTN_t *findNodeOnBT(BTN_t *R, int keyValue, BT_OPTION_e option) {
@@ -165,12 +168,12 @@ BTN_t *findNodeOnBT(BTN_t *R, int keyValue, BT_OPTION_e option) {
     switch (option) {
         case BT_OPTION_TYPE_BREADTH_FIRST_SEARCH:
             node = levelOrderTraversalOnBT(R, findNodeOnBTslave, &keyValue);
-            if (node == NULL) return NULL;
-            return node;
+            if (node != NULL) return node;
+            break;
         case BT_OPTION_TYPE_DEPTH_FIRST_SEARCH:
             node = preOrderTraversalOnBT(R, findNodeOnBTslave, &keyValue);
-            if (node == NULL) return NULL;
-            return node;
+            if (node != NULL) return node;
+            break;
         default:
             break;
     }
@@ -329,10 +332,6 @@ void insertBTtoArray(BTN_t *R, void **array, int index) {
     array[index] = R;
     insertBTtoArray(R->left, array, getLeftIndex(index));
     insertBTtoArray(R->right, array, getRightIndex(index));
-}
-
-int getHeightBT(BTN_t *R) {
-    return getHeightBTslave(R, -1);
 }
 
 int getHeightBTslave(BTN_t *R, int initValue) {
