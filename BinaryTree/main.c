@@ -69,21 +69,21 @@ void test() {
     
     printf("*** breadth first find ***\n");
     Element_t *element1 = findElementOnBT(root, findKey, BT_OPTION_TYPE_BREADTH_FIRST_SEARCH);
-    printf("breadth first find key %d [%s] : found value = %d\n", findKey, __func__, element1->value);
+    printf("breadth first find keyValue %d [%s] : found value = %d\n", findKey, __func__, element1->value);
     
     printf("*** depth first find ***\n");
     Element_t *element2 = findElementOnBT(root, findKey, BT_OPTION_TYPE_DEPTH_FIRST_SEARCH);
-    printf("depth first find key %d [%s] : found value = %d\n", findKey, __func__, element2->value);
+    printf("depth first find keyValue %d [%s] : found value = %d\n", findKey, __func__, element2->value);
     
     printf("*** delete ***\n");
     printf("--- Binary Tree ---\n");
     viewBT(root, BT_OPTION_VIEW_INT);
     bool check = deleteElementOnBT(root, deleteKey);
     if (check) {
-        printf("delete key %d [%s] : success.\n", deleteKey, __func__);
+        printf("delete keyValue %d [%s] : success.\n", deleteKey, __func__);
     }
     else {
-        printf("error [%s] : could not delete key %d.\n", __func__, deleteKey);
+        printf("error [%s] : could not delete keyValue %d.\n", __func__, deleteKey);
     }
     printf("--- Binary Tree ---\n");
     viewBT(root, BT_OPTION_VIEW_INT);
@@ -106,22 +106,22 @@ bool destroyElement(Element_t *element) {
 }
 
 void *levelOrderProcess(BTN_t *R, void *parameter) {
-    printf("level-order traversal : %d\n", R->key);
+    printf("level-order traversal : %d\n", R->keyValue);
     return NULL;    // none stop.
 }
 
 void *preOrderProcess(BTN_t *R, void *parameter) {
-    printf("pre-order traversal : %d\n", R->key);
+    printf("pre-order traversal : %d\n", R->keyValue);
     return NULL;    // none stop.
 }
 
 void *inOrderProcess(BTN_t *R, void *parameter) {
-    printf("in-order traversal : %d\n", R->key);
+    printf("in-order traversal : %d\n", R->keyValue);
     return NULL;    // none stop.
 }
 
 void *postOrderProcess(BTN_t *R, void *parameter) {
-    printf("post-order traversal : %d\n", R->key);
+    printf("post-order traversal : %d\n", R->keyValue);
     return NULL;    // none stop.
 }
 

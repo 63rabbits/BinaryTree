@@ -17,7 +17,7 @@ typedef enum BTOption {
 } BT_OPTION_e;
 
 typedef struct BinaryTeee_Node {
-    int key;
+    int keyValue;
     void *element;
     struct BinaryTeee_Node *parent;
     struct BinaryTeee_Node *left;
@@ -25,11 +25,11 @@ typedef struct BinaryTeee_Node {
 } BTN_t;
 
 //////////////////////////////////////////////////
-BTN_t *createNodeBT(int key, void *element);
+BTN_t *createNodeBT(int keyValue, void *element);
 bool destroyNodeBT(BTN_t *R, int option);
-BTN_t *insertElementOnBT(BTN_t *R, int key, void *element);
-bool deleteElementOnBT(BTN_t *R, int key);
-void *findElementOnBT(BTN_t *R, int key, BT_OPTION_e option);
+BTN_t *insertElementOnBT(BTN_t *R, int keyValue, void *element);
+bool deleteElementOnBT(BTN_t *R, int keyValue);
+void *findElementOnBT(BTN_t *R, int keyValue, BT_OPTION_e option);
 void *levelOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter);
 void *preOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter);
 void *inOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *parameter);

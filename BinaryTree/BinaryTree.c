@@ -8,13 +8,11 @@
 
 //////////////////////////////////////////////////
 //  private
-void *insertElementAsChildOnBT(BTN_t *node, void *child);
-BTN_t *findNodeOnBT(BTN_t *R, int key, BT_OPTION_e option);
-void *breadthFirstFindElementOnBT(BTN_t *R, int key);
-BTN_t *breadthFirstFindNodeOnBT(BTN_t *R, int key);
-void *depthFirstFindElementOnBT(BTN_t *R, int key);
-BTN_t *depthFirstFindNodeOnBT(BTN_t *R, int key);
+BTN_t *findNodeOnBT(BTN_t *R, int keyValue, BT_OPTION_e option);
 BTN_t *findLeftmostLeefNodeOnBT(BTN_t *B);
+void *insertElementOnBTslave(BTN_t *R, void *child);
+void *destroyNodeBTslave(BTN_t *R, void *option);
+void *findNodeOnBTslave(BTN_t *R, void *option);
 //  debug
 void *convertBTtoArray(BTN_t *R);
 void insertBTtoArray(BTN_t *R, void **array, int index);
@@ -23,14 +21,13 @@ int getHeightBTslave(BTN_t *R, int initValue);
 
 //////////////////////////////////////////////////
 //  public
-BTN_t *createNodeBT(int key, void *element) {
+BTN_t *createNodeBT(int keyValue, void *element) {
     // Block illegal parameters.
     if (element == NULL) return NULL;
     
     BTN_t *node = malloc(sizeof(BTN_t));
     if (node == NULL) return NULL;
-    
-    node->key = key;
+    node->keyValue = keyValue;
     node->element = element;
     node->parent = NULL;
     node->left = NULL;
@@ -43,43 +40,35 @@ bool destroyNodeBT(BTN_t *R, int option) {
     // Block illegal parameters
     if (R == NULL) return false;
     
-    // post-order traversal.
-    destroyNodeBT(R->left, option);
-    destroyNodeBT(R->right, option);
-    if ((option == BT_OPTION_WITH_ELEMENT) &&
-        (R->element != NULL)) {
-        free(R->element);
-    }
-    free(R);
+    preOrderTraversalOnBT(R, destroyNodeBTslave, &option);
     
     return true;
 }
 
-BTN_t *insertElementOnBT(BTN_t *R, int key, void *element) {
+BTN_t *insertElementOnBT(BTN_t *R, int keyValue, void *element) {
     // Block illegal parameters.
     if (element == NULL) return NULL;
     
-    BTN_t *node = createNodeBT(key, element);
+    BTN_t *node = createNodeBT(keyValue, element);
     if (node == NULL) return NULL;
     if (R == NULL) return node;
-    
-    levelOrderTraversalOnBT(R, insertElementAsChildOnBT, node);
+    levelOrderTraversalOnBT(R, insertElementOnBTslave, node);
     
     return R;
 }
 
-bool deleteElementOnBT(BTN_t *R, int key) {
+bool deleteElementOnBT(BTN_t *R, int keyValue) {
     // Block illegal parameters.
     if (R == NULL) return false;
     
     //    Consider a subtree rooted at the node to be deleted.
     //    Replace the deletion node with the leftmost leaf of the subtree.
-    BTN_t *target = findNodeOnBT(R, key, BT_OPTION_TYPE_BREADTH_FIRST_SEARCH);
+    BTN_t *target = findNodeOnBT(R, keyValue, BT_OPTION_TYPE_BREADTH_FIRST_SEARCH);
     if (target == NULL) return false;
     BTN_t *leftmost = findLeftmostLeefNodeOnBT(target);
 
     // change a value and element of target node. then delete a leftmost node.
-    target->key = leftmost->key;
+    target->keyValue = leftmost->keyValue;
     free(target->element);
     target->element = leftmost->element;
     if (leftmost->parent != NULL) {
@@ -95,8 +84,8 @@ bool deleteElementOnBT(BTN_t *R, int key) {
     return true;
 }
 
-void *findElementOnBT(BTN_t *R, int key, BT_OPTION_e option) {
-    BTN_t *findNode = findNodeOnBT(R, key, option);
+void *findElementOnBT(BTN_t *R, int keyValue, BT_OPTION_e option) {
+    BTN_t *findNode = findNodeOnBT(R, keyValue, option);
     if (findNode == NULL) return NULL;
     return findNode->element;
 }
@@ -171,85 +160,20 @@ void *postOrderTraversalOnBT(BTN_t *R, void *(*func)(BTN_t*, void*), void *param
 
 //////////////////////////////////////////////////
 //  private
-void *insertElementAsChildOnBT(BTN_t *node, void *child) {
-    if (node == NULL) return NULL;
-    
-    if (node->left == NULL) {
-        ((BTN_t *)child)->parent = node;
-        node->left = child;
-        return child;
-    }
-    if (node->right == NULL) {
-        ((BTN_t *)child)->parent = node;
-        node->right = child;
-        return child;
-    }
-    
-    return NULL;
-}
-
-BTN_t *findNodeOnBT(BTN_t *R, int key, BT_OPTION_e option) {
+BTN_t *findNodeOnBT(BTN_t *R, int keyValue, BT_OPTION_e option) {
+    BTN_t *node = NULL;
     switch (option) {
         case BT_OPTION_TYPE_BREADTH_FIRST_SEARCH:
-            return breadthFirstFindNodeOnBT(R, key);
+            node = levelOrderTraversalOnBT(R, findNodeOnBTslave, &keyValue);
+            if (node == NULL) return NULL;
+            return node;
         case BT_OPTION_TYPE_DEPTH_FIRST_SEARCH:
-            return depthFirstFindNodeOnBT(R, key);
+            node = preOrderTraversalOnBT(R, findNodeOnBTslave, &keyValue);
+            if (node == NULL) return NULL;
+            return node;
         default:
             break;
     }
-    return NULL;
-}
-
-void *breadthFirstFindElementOnBT(BTN_t *R, int key) {
-    BTN_t *findNode = breadthFirstFindNodeOnBT(R, key);
-    if (findNode == NULL) return NULL;
-    return findNode->element;
-}
-
-BTN_t *breadthFirstFindNodeOnBT(BTN_t *R, int key) {
-    // Block illegal parameters.
-    if (R == NULL) return NULL;
-    //　level-order traversal.
-    BTN_t *findNode = NULL;
-    QUEUE_t *Q = createQueue();
-    enQueue(Q, R);
-    while (true) {
-        BTN_t * node = deQueue(Q);
-        if (node == NULL) break;
-        
-        if (node->key == key) {
-            findNode = node;
-            break;
-        }
-        if (node->left != NULL) {
-            enQueue(Q, node->left);
-        }
-        if (node->right != NULL) {
-            enQueue(Q, node->right);
-        }
-    }
-    destroyQueue(Q, QUEUE_OPTION_NONE);
-    return findNode;
-}
-
-void *depthFirstFindElementOnBT(BTN_t *R, int key) {
-    BTN_t *findNode = depthFirstFindNodeOnBT(R, key);
-    if (findNode == NULL) return NULL;
-    return findNode->element;
-}
-
-BTN_t *depthFirstFindNodeOnBT(BTN_t *R, int key) {
-    // Block illegal parameters.
-    if (R == NULL) return NULL;
-    
-    //  pre-order traversal.
-    if (R->key == key) return R;
-    BTN_t *node = NULL;
-    node =depthFirstFindNodeOnBT(R->left, key);
-    if (node != NULL) return node;
-    node = depthFirstFindNodeOnBT(R->right, key);
-    if (node != NULL) return node;
-    
     return NULL;
 }
 
@@ -270,6 +194,44 @@ BTN_t *findLeftmostLeefNodeOnBT(BTN_t *B) {
         break;
     }
     return leftmost;
+}
+
+void *insertElementOnBTslave(BTN_t *R, void *child) {
+    if (R == NULL) return NULL;
+    
+    if (R->left == NULL) {
+        ((BTN_t *)child)->parent = R;
+        R->left = child;
+        return child;
+    }
+    if (R->right == NULL) {
+        ((BTN_t *)child)->parent = R;
+        R->right = child;
+        return child;
+    }
+    
+    return NULL;
+}
+
+void *destroyNodeBTslave(BTN_t *R, void *option) {
+    // Block illegal parameters.
+    if (R == NULL) return NULL;
+    
+    if ((*((int*)option) == BT_OPTION_WITH_ELEMENT) &&
+        (R->element != NULL)) {
+        free(R->element);
+    }
+    free(R);
+    
+    return NULL;
+}
+
+void *findNodeOnBTslave(BTN_t *R, void *parameter) {
+    // Block illegal parameters.
+    if (R == NULL) return NULL;
+    
+    if (R->keyValue == *((int*)parameter)) return R;
+    return NULL;
 }
 
 //////////////////////////////////////////////////
@@ -319,10 +281,10 @@ void viewBT(BTN_t *R, BT_OPTION_e option) {
         for (int j=leftmostIndex; j<=rightmostIndex; j++) {
             if (array[j] != NULL) {
                 if (option == BT_OPTION_VIEW_INT) {
-                    sprintf(view[i], format10, view[i], ((BTN_t *)array[j])->key);
+                    sprintf(view[i], format10, view[i], ((BTN_t *)array[j])->keyValue);
                 }
                 else {
-                    sprintf(view[i], format11, view[i], (char)((BTN_t *)array[j])->key);
+                    sprintf(view[i], format11, view[i], (char)((BTN_t *)array[j])->keyValue);
                 }
             }
             else {
