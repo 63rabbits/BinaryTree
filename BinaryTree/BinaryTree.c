@@ -161,7 +161,7 @@ int getHeightBT(BTN_t *R) {
     return getHeightBTslave(R, -1);
 }
 
-void *getElementInNodeOnBT(BTN_t *R) {
+void *getElementOnBT(BTN_t *R) {
     // Block illegal parameters.
     if (R == NULL) return NULL;
     

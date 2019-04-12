@@ -106,28 +106,28 @@ bool destroyElement(Element_t *element) {
 }
 
 void *levelOrderTraversalOnBTslave(BTN_t *R, void *parameter) {
-    Element_t *element = getElementInNodeOnBT(R);
+    Element_t *element = getElementOnBT(R);
 
     printf("level-order traversal : %d\n", element->value);
     return NULL;    // none stop.
 }
 
 void *preOrderTraversalOnBTslave(BTN_t *R, void *parameter) {
-    Element_t *element = getElementInNodeOnBT(R);
+    Element_t *element = getElementOnBT(R);
 
     printf("pre-order traversal : %d\n", element->value);
     return NULL;    // none stop.
 }
 
 void *inOrderTraversalOnBTslave(BTN_t *R, void *parameter) {
-    Element_t *element = getElementInNodeOnBT(R);
+    Element_t *element = getElementOnBT(R);
 
     printf("in-order traversal : %d\n", element->value);
     return NULL;    // none stop.
 }
 
 void *postOrderTraversalOnBTslave(BTN_t *R, void *parameter) {
-    Element_t *element = getElementInNodeOnBT(R);
+    Element_t *element = getElementOnBT(R);
 
     printf("post-order traversal : %d\n", element->value);
     return NULL;    // none stop.
