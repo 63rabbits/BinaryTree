@@ -9,7 +9,7 @@
 //////////////////////////////////////////////////
 //  private
 BTN_t *findNodeOnBT(BTN_t *R, int keyValue, BT_OPTION_e option);
-BTN_t *findLeftmostLeefNodeOnBT(BTN_t *B);
+BTN_t *findLeftmostLeefNodeOnBT(BTN_t *R);
 void *insertElementOnBTslave(BTN_t *R, void *child);
 void *destroyNodeBTslave(BTN_t *R, void *option);
 void *findNodeOnBTslave(BTN_t *R, void *option);
@@ -187,9 +187,9 @@ BTN_t *findNodeOnBT(BTN_t *R, int keyValue, BT_OPTION_e option) {
     return NULL;
 }
 
-BTN_t *findLeftmostLeefNodeOnBT(BTN_t *B) {
+BTN_t *findLeftmostLeefNodeOnBT(BTN_t *R) {
     BTN_t *parent = NULL;
-    BTN_t *leftmost = B;
+    BTN_t *leftmost = R;
     while (true) {
         if (leftmost->left != NULL) {
             parent = leftmost;
