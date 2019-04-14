@@ -62,7 +62,7 @@ bool deleteElementOnBT(BTN_t *R, int keyValue) {
     
     //    Consider a subtree rooted at the node to be deleted.
     //    Replace the deletion node with the leftmost leaf of the subtree.
-    BTN_t *target = findNodeOnBT(R, keyValue, BT_OPTION_TYPE_BREADTH_FIRST_SEARCH);
+    BTN_t *target = findNodeOnBT(R, keyValue, BT_OPTION_BREADTH_FIRST_SEARCH);
     if (target == NULL) return false;
     BTN_t *leftmost = findLeftmostLeefNodeOnBT(target);
 
@@ -173,11 +173,11 @@ void *getElementOnBT(BTN_t *R) {
 BTN_t *findNodeOnBT(BTN_t *R, int keyValue, BT_OPTION_e option) {
     BTN_t *node = NULL;
     switch (option) {
-        case BT_OPTION_TYPE_BREADTH_FIRST_SEARCH:
+        case BT_OPTION_BREADTH_FIRST_SEARCH:
             node = levelOrderTraversalOnBT(R, findNodeOnBTslave, &keyValue);
             if (node != NULL) return node;
             break;
-        case BT_OPTION_TYPE_DEPTH_FIRST_SEARCH:
+        case BT_OPTION_DEPTH_FIRST_SEARCH:
             node = preOrderTraversalOnBT(R, findNodeOnBTslave, &keyValue);
             if (node != NULL) return node;
             break;

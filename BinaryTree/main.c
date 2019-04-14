@@ -68,11 +68,11 @@ void test() {
     postOrderTraversalOnBT(root, postOrderTraversalOnBTslave, NULL);
     
     printf("*** breadth first find ***\n");
-    Element_t *element1 = findElementOnBT(root, findKey, BT_OPTION_TYPE_BREADTH_FIRST_SEARCH);
+    Element_t *element1 = findElementOnBT(root, findKey, BT_OPTION_BREADTH_FIRST_SEARCH);
     printf("breadth first find keyValue %d [%s] : found value = %d\n", findKey, __func__, element1->value);
     
     printf("*** depth first find ***\n");
-    Element_t *element2 = findElementOnBT(root, findKey, BT_OPTION_TYPE_DEPTH_FIRST_SEARCH);
+    Element_t *element2 = findElementOnBT(root, findKey, BT_OPTION_DEPTH_FIRST_SEARCH);
     printf("depth first find keyValue %d [%s] : found value = %d\n", findKey, __func__, element2->value);
     
     printf("*** delete ***\n");
