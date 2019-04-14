@@ -88,7 +88,7 @@ void test() {
     printf("--- Binary Tree ---\n");
     viewBT(root, BT_OPTION_VIEW_INT);
     
-    destroyNodeBT(root, BT_OPTION_WITH_ELEMENT);
+    destroyBT(root, BT_OPTION_WITH_ELEMENT);
 }
 
 Element_t *createElement(int value) {

@@ -8,6 +8,7 @@
 
 //////////////////////////////////////////////////
 //  private
+BTN_t *createNodeBT(int keyValue, void *element);
 BTN_t *findNodeOnBT(BTN_t *R, int keyValue, BT_OPTION_e option);
 BTN_t *findLeftmostLeefNodeOnBT(BTN_t *R);
 void *insertElementOnBTslave(BTN_t *R, void *child);
@@ -20,22 +21,7 @@ int getHeightBTslave(BTN_t *R, int initValue);
 
 //////////////////////////////////////////////////
 //  public
-BTN_t *createNodeBT(int keyValue, void *element) {
-    // Block illegal parameters.
-    if (element == NULL) return NULL;
-    
-    BTN_t *node = malloc(sizeof(BTN_t));
-    if (node == NULL) return NULL;
-    node->keyValue = keyValue;
-    node->element = element;
-    node->parent = NULL;
-    node->left = NULL;
-    node->right = NULL;
-    
-    return node;
-}
-
-bool destroyNodeBT(BTN_t *R, BT_OPTION_e option) {
+bool destroyBT(BTN_t *R, BT_OPTION_e option) {
     // Block illegal parameters
     if (R == NULL) return false;
     
@@ -78,7 +64,7 @@ bool deleteElementOnBT(BTN_t *R, int keyValue) {
             leftmost->parent->right = NULL;
         }
     }
-    destroyNodeBT(leftmost, BT_OPTION_NONE);
+    destroyBT(leftmost, BT_OPTION_NONE);
     
     return true;
 }
@@ -170,6 +156,21 @@ void *getElementOnBT(BTN_t *R) {
 
 //////////////////////////////////////////////////
 //  private
+BTN_t *createNodeBT(int keyValue, void *element) {
+    // Block illegal parameters.
+    if (element == NULL) return NULL;
+    
+    BTN_t *node = malloc(sizeof(BTN_t));
+    if (node == NULL) return NULL;
+    node->keyValue = keyValue;
+    node->element = element;
+    node->parent = NULL;
+    node->left = NULL;
+    node->right = NULL;
+    
+    return node;
+}
+
 BTN_t *findNodeOnBT(BTN_t *R, int keyValue, BT_OPTION_e option) {
     BTN_t *node = NULL;
     switch (option) {
