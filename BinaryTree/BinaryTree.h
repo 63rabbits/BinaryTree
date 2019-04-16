@@ -2,7 +2,6 @@
 #define BinaryTree_h
 
 #include <stdbool.h>
-#include "Queue.h"
 
 //////////////////////////////////////////////////
 typedef enum BTOption {
