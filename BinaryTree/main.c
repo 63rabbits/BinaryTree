@@ -52,32 +52,35 @@ void test() {
             return;
         }
     }
-    printf("--- Binary Tree ---\n");
-    viewBT(root, BT_OPTION_VIEW_INT);
 
-    printf("*** level-order traversal ***\n");
+#ifdef DEBUG
+    viewBT(root, BT_OPTION_VIEW_INT);
+#endif
+    
+    printf("\n*** level-order traversal ***\n");
     levelOrderTraversalOnBT(root, levelOrderTraversalOnBTslave, NULL);
     
-    printf("*** pre-order traversal ***\n");
+    printf("\n*** pre-order traversal ***\n");
     preOrderTraversalOnBT(root, preOrderTraversalOnBTslave, NULL);
     
-    printf("*** in-order traversal ***\n");
+    printf("\n*** in-order traversal ***\n");
     inOrderTraversalOnBT(root, inOrderTraversalOnBTslave, NULL);
     
-    printf("*** post-order traversal ***\n");
+    printf("\n*** post-order traversal ***\n");
     postOrderTraversalOnBT(root, postOrderTraversalOnBTslave, NULL);
     
-    printf("*** breadth first find ***\n");
+    printf("\n*** breadth first find ***\n");
     Element_t *element1 = findElementOnBT(root, findKey, BT_OPTION_BREADTH_FIRST_SEARCH);
     printf("breadth first find keyValue %d [%s] : found value = %d\n", findKey, __func__, element1->value);
     
-    printf("*** depth first find ***\n");
+    printf("\n*** depth first find ***\n");
     Element_t *element2 = findElementOnBT(root, findKey, BT_OPTION_DEPTH_FIRST_SEARCH);
     printf("depth first find keyValue %d [%s] : found value = %d\n", findKey, __func__, element2->value);
     
-    printf("*** delete ***\n");
-    printf("--- Binary Tree ---\n");
+    printf("\n*** delete ***\n");
+#ifdef DEBUG
     viewBT(root, BT_OPTION_VIEW_INT);
+#endif
     bool check = deleteElementOnBT(root, deleteKey);
     if (check) {
         printf("delete keyValue %d [%s] : success.\n", deleteKey, __func__);
@@ -85,8 +88,10 @@ void test() {
     else {
         printf("error [%s] : could not delete keyValue %d.\n", __func__, deleteKey);
     }
-    printf("--- Binary Tree ---\n");
+
+#ifdef DEBUG
     viewBT(root, BT_OPTION_VIEW_INT);
+#endif
     
     destroyBT(root, BT_OPTION_WITH_ELEMENT);
 }

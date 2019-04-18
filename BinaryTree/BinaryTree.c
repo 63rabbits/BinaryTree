@@ -9,16 +9,20 @@
 
 //////////////////////////////////////////////////
 //  private
+#define max(a, b) (a > b ? a : b)
+
 BTN_t *createNodeBT(int keyValue, void *element);
 BTN_t *findNodeOnBT(BTN_t *R, int keyValue, BT_OPTION_e option);
 BTN_t *findLeftmostLeefNodeOnBT(BTN_t *R);
 void *insertElementOnBTslave(BTN_t *R, void *child);
 void *destroyNodeBTslave(BTN_t *R, void *option);
 void *findNodeOnBTslave(BTN_t *R, void *option);
-//  debug
+int getHeightBTslave(BTN_t *R, int initValue);
+
+#ifdef DEBUG
 void *convertBTtoArray(BTN_t *R);
 void insertBTtoArray(BTN_t *R, void **array, int index);
-int getHeightBTslave(BTN_t *R, int initValue);
+#endif
 
 //////////////////////////////////////////////////
 //  public
@@ -249,14 +253,25 @@ void *findNodeOnBTslave(BTN_t *R, void *parameter) {
     return NULL;
 }
 
+int getHeightBTslave(BTN_t *R, int initValue) {
+    // pre-order traversal.
+    if (R == NULL) return initValue;
+    
+    initValue++;
+    int leftHeight = getHeightBTslave(R->left, initValue);
+    int rightHeight = getHeightBTslave(R->right, initValue);
+    return max(leftHeight, rightHeight);
+}
+
+#ifdef DEBUG
 //////////////////////////////////////////////////
 //  debug
 #define getParent(v) ((v - 1) / 2)
 #define getLeftIndex(v) (v * 2 + 1)
 #define getRightIndex(v) (v * 2 + 2)
-#define max(a, b) (a > b ? a : b)
 
 void viewBT(BTN_t *R, BT_OPTION_e option) {
+    printf("\n--- Binary Tree ---\n");
     int wordWidth = 4;
     if (option == BT_OPTION_VIEW_CHAR) {
         wordWidth = 2;
@@ -346,12 +361,4 @@ void insertBTtoArray(BTN_t *R, void **array, int index) {
     insertBTtoArray(R->right, array, getRightIndex(index));
 }
 
-int getHeightBTslave(BTN_t *R, int initValue) {
-    // pre-order traversal.
-    if (R == NULL) return initValue;
-    
-    initValue++;
-    int leftHeight = getHeightBTslave(R->left, initValue);
-    int rightHeight = getHeightBTslave(R->right, initValue);
-    return max(leftHeight, rightHeight);
-}
+#endif
